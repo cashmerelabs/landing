@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>3D Banner</title>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        section#banner {
+            display: grid;
+            grid-template-columns: 1fr;
+            place-items: center;
+            height: 100vh;
+
+            font-family: "Lato", Helvetica, sans-serif;
+            color: white;
+            user-select: none;
+        }
+
+        section#banner > * {
+            grid-row-start: 1;
+            grid-column-start: 1;
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        section#banner header {
+            align-self: start;
+            justify-self: stretch;
+
+            display: grid;
+            grid-template-columns: 1fr auto auto auto;
+            align-items: center;
+            grid-gap: 2em;
+            padding: 2em 2.4em;
+
+            text-shadow: 0 3px 6px black;
+            font-size: 1em;
+        }
+        section#banner header > * {
+            color: unset;
+            text-decoration: unset;
+            white-space: nowrap;
+            opacity: 0.7;
+        }
+        section#banner header > a:hover {
+            opacity: 0.9;
+        }
+        section#banner header span {
+            display: flex;
+            align-items: center;
+        }
+        section#banner header img {
+            max-height: 1.8em;
+            margin-right: 0.4em;
+            filter: invert(1);
+        }
+        section#banner header #app {
+            padding: 0.6em 1em;
+            border-radius: 1em;
+            background-color: #272727;
+        }
+
+        section#banner hgroup {
+            z-index: 1;
+            margin-top: min(50vh, 50vw);
+            padding: 0 1em;
+            font-size: 2.2em;
+
+            text-align: center;
+            color: white;
+            text-shadow: 0 3px 6px black;
+        }
+        section#banner hgroup #description {
+            margin: unset;
+            opacity: 0.7;
+        }
+        section#banner hgroup #value {
+            margin: unset;
+            margin-top: 0.2em;
+        }
+
+        section#banner #background {
+            z-index: -1;
+            place-self: stretch;
+            object-fit: cover;
+            background: linear-gradient(180deg, #000, #111);
+        }
+
+        section#banner #animation {
+            z-index: 0;
+            aspect-ratio: 1;
+            /* OPTIONAL: You can change the size of the animation (vh: view height, vw: view width)  */
+            width: min(80vh, 80vw);
+            /*width: min(60vh, 60vw);*/
+        }
+    </style>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js" integrity="sha512-334uBDwY0iZ2TklV1OtDtBW9vp7jjP7SWRzT7Ehu1fdtPIjTpCwTSFb8HI/YBau9L1/kRBEOALrS229Kry4yFQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <link rel="preload" href="assets/logo.png" as="image" type="image/png" crossorigin>
+    <script>
+        const logo_texture = new THREE.TextureLoader().load("assets/logo.png");
+    </script>
+</head>
+<body>
+
+<section id="banner">
+    <header>
+        <span><img src="assets/logo.png" alt="logo">Cashmere</span>
+        <a id="dashboard" href="#todo">Whitepaper</a>
+        <a id="developers" href="#todo">Docs</a>
+        <a id="app" href="#todo">Launch App</a>
+    </header>
+    <hgroup>
+        <h2>Welcome to the future of stableswap</h2>
+        <h6 id="description">Total Value Locked</h6>
+        <h6 id="value">$</h6>
+    </hgroup>
+    <video autoplay muted loop id="background">
+<!--        OPTIONAL: You can change the video file or pick none to have a black background-->
+
+<!--        <source src="assets/PurpleEnergy_1080p30_WebO/1000bitr.mp4" type="video/mp4">-->
+<!--        <source src="assets/PurpleEnergy_1080p30_WebO/2000bitr.mp4" type="video/mp4">-->
+        <source src="assets/TechForm_1080p30_WebO/8000bitr.mp4" type="video/mp4">
+<!--        <source src="assets/PurpleEnergy_1080p30_WebO/8000bitr.mp4" type="video/mp4">-->
+
+<!--        <source src="assets/WarpSpeed_1080p30_WebO/1000bitr.mp4" type="video/mp4">-->
+<!--        <source src="assets/WarpSpeed_1080p30_WebO/2000bitr.mp4" type="video/mp4">-->
+<!--        <source src="assets/WarpSpeed_1080p30_WebO/4000bitr.mp4" type="video/mp4">-->
+<!--        <source src="assets/WarpSpeed_1080p30_WebO/8000bitr.mp4" type="video/mp4">-->
+
+<!--        <source src="assets/TechForm_1080p30_WebO/1000bitr.mp4" type="video/mp4">-->
+<!--        <source src="assets/TechForm_1080p30_WebO/2000bitr.mp4" type="video/mp4">-->
+<!--        <source src="assets/TechForm_1080p30_WebO/4000bitr.mp4" type="video/mp4">-->
+<!--        <source src="assets/TechForm_1080p30_WebO/8000bitr.mp4" type="video/mp4">-->
+    </video>
+    <canvas id="animation"></canvas>
+</section>
+
+<script>
+    const renderer = new THREE.WebGLRenderer({
+        canvas: document.querySelector("section#banner #animation"),
+        alpha: true,
+        depth: false,
+        sortObjects: false,
+    });
+    // render at a higher resolution, more costly than regular antialiasing but gives much better results
+    renderer.setPixelRatio(Math.min(1.6 * devicePixelRatio, 1.8));
+
+    let resize_timeout;
+    const resize_observer = new ResizeObserver(entries => {
+        const width = Math.floor(entries[0].contentRect.width);
+        clearTimeout(resize_timeout);
+        resize_timeout = setTimeout(() => renderer.setSize(width, width, false), 200);
+    });
+    resize_observer.observe(renderer.domElement);
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(30, 1., 0.1, 10);
+    camera.position.z = 4.2;
+
+    // OPTIONAL: You can change the container geometry below
+    // const geometry = new THREE.TetrahedronGeometry(1.2, 0);
+    const geometry = new THREE.TetrahedronGeometry(1.2, 0);
+    // const geometry = new THREE.BoxGeometry(1.2, 1.2, 1.2);
+
+    const glass_shaders = {
+        vertex: `
+        varying vec3 bary;
+        varying vec3 pos_ws;
+        varying vec3 pos_vs;
+        varying vec4 pos_cs;
+        varying vec3 normal_vs;
+
+        void main()
+        {
+            bary[gl_VertexID % 3] = 1.;
+
+            normal_vs = normalMatrix * normal;
+
+            vec4 pos = vec4(position, 1.0);
+
+            pos = modelMatrix * pos;
+            pos_ws = pos.xyz;
+
+            pos = viewMatrix * pos;
+            pos_vs = pos.xyz;
+
+            pos = projectionMatrix * pos;
+            pos_cs = pos;
+
+            gl_Position = pos;
+        }`,
+        frag_front: `
+        varying vec3 bary;
+        varying vec3 pos_ws;
+        varying vec3 pos_vs;
+        varying vec4 pos_cs;
+        varying vec3 normal_vs;
+
+        uniform sampler2D logo_texture;
+        uniform vec3 light_pos;
+
+        vec4 edge_col()
+        {
+            float k = -0.01;
+            float bary_f = min(1.0, (bary.x + k) * (bary.y + k) * (bary.z + k) * 10.0);
+            // return vec4(vec3(bary_f), 1);
+
+            float bary_mix = smoothstep(-0.005, -0.015, bary_f);
+            // return vec4(vec3(bary_mix), 1);
+
+            vec3 col = vec3(0.12);
+            return vec4(col, bary_mix);
+        }
+
+        vec4 refr_col()
+        {
+            float k = -0.008;
+            float bary_f = 1. - min(1.0, (bary.x + k) * (bary.y + k) * (bary.z + k) * 200.0);
+            // return vec4(vec3(bary_f), 1);
+
+            const float refr_base = 0.92;
+            float refr_rate = refr_base - pow(bary_f, 1.) * 0.2;
+            // return vec4(vec3(refr_rate), 1);
+
+            vec2 uv = pos_cs.xy / pos_cs.w;
+            // return vec4(vec3(mod(length(uv), 0.1) > 0.07), 1);
+
+            float chroma = 0.12;
+            vec3 refr_R = refract(vec3(chroma * (refr_base - refr_rate), 0, -1), normal_vs, refr_rate);
+            vec2 uv_R = uv - refr_R.xy / refr_R.z * pos_ws.z;
+            vec3 refr_G = refract(vec3(0, -chroma * (refr_base - refr_rate), -1), normal_vs, refr_rate);
+            vec2 uv_G = uv - refr_G.xy / refr_G.z * pos_ws.z;
+            vec3 refr_B = refract(vec3(0, chroma * (refr_base - refr_rate), -1), normal_vs, refr_rate);
+            vec2 uv_B = uv - refr_B.xy / refr_B.z * pos_ws.z;
+            // return vec4(vec3(mod(length(uv_R), 0.1) > 0.07, mod(length(uv_G), 0.1) > 0.07, mod(length(uv_B), 0.1) > 0.07), 1);
+
+            float alpha_R = texture(logo_texture, uv_R * 1.2 + 0.5).a;
+            float alpha_G = texture(logo_texture, uv_G * 1.2 + 0.5).a;
+            float alpha_B = texture(logo_texture, uv_B * 1.2 + 0.5).a;
+            vec3 col = 0.956 * vec3(alpha_R, alpha_G, alpha_B);
+
+            float alpha_max = max(max(alpha_R, alpha_G), alpha_B);
+
+            vec3 light_col = vec3(0.9, 0.9, 20);
+            float light_f = pow(dot(normalize(light_pos - vec3(uv_R, 0)), vec3(0, 0, 1.)), 8.);
+
+            return vec4(mix(col, light_col, light_f), alpha_max);
+        }
+
+        void main()
+        {
+            vec4 refr_col = refr_col();
+            vec4 edge_col = edge_col();
+            vec3 col = refr_col.a * refr_col.rgb + edge_col.a * edge_col.rgb;
+            float alpha = max(refr_col.a, edge_col.a);
+            gl_FragColor = vec4(col, alpha);
+        }`,
+        frag_back: `
+        varying vec3 bary;
+        varying vec3 pos_ws;
+        varying vec3 pos_vs;
+        varying vec4 pos_cs;
+        varying vec3 normal_vs;
+
+        uniform sampler2D logo_texture;
+
+        vec4 edge_col()
+        {
+            float k = -0.01;
+            float bary_f = min(1.0, (bary.x + k) * (bary.y + k) * (bary.z + k) * 10.0);
+            // return vec4(vec3(bary_f), 1);
+
+            float bary_mix = smoothstep(-0.005, -0.015, bary_f);
+            // return vec4(vec3(bary_mix), 1);
+
+            vec3 col = vec3(0.12);
+            return vec4(col * 0.6, bary_mix);
+        }
+
+        vec4 refl_col()
+        {
+            vec2 uv = pos_cs.xy / pos_cs.w;
+            // return vec4(vec3(mod(length(uv), 0.1) > 0.07), 1);
+
+            vec3 refl = reflect(vec3(0, 0, -1), -normal_vs);
+            if (abs(refl.z) < 0.02)
+                return vec4(0);
+
+            uv -= refl.xy / refl.z * pos_ws.z;
+            // return vec4(vec3(mod(length(uv), 0.1) > 0.07), 1);
+
+            vec3 col = vec3(0.956);
+            float alpha = textureLod(logo_texture, uv * 1.3 + 0.5, 1.5).a;
+            return vec4(col, max(0., alpha - 0.7));
+        }
+
+        void main()
+        {
+            vec4 refl_col = refl_col();
+            vec4 edge_col = edge_col();
+            vec3 col = refl_col.a * refl_col.rgb + edge_col.a * edge_col.rgb;
+            float alpha = max(refl_col.a, edge_col.a);
+            gl_FragColor = vec4(col, alpha);
+        }`,
+    };
+
+    const glass_material_front = new THREE.ShaderMaterial({
+        vertexShader: glass_shaders.vertex,
+        fragmentShader: glass_shaders.frag_front,
+        uniforms: {
+            logo_texture: {value: logo_texture},
+            light_pos: {value: new THREE.Vector3(0.2, 0.2, 0.5)}
+        },
+        side: THREE.FrontSide,
+        transparent: true,
+        depthWrite: false,
+    });
+    const glass_material_back = new THREE.ShaderMaterial({
+        vertexShader: glass_shaders.vertex,
+        fragmentShader: glass_shaders.frag_back,
+        uniforms: {logo_texture: {value: logo_texture}},
+        side: THREE.BackSide,
+        transparent: true,
+        depthWrite: false,
+    });
+
+    const container = new THREE.Group();
+    let glass_front = new THREE.Mesh(geometry, glass_material_front);
+    glass_front.renderOrder = 1;
+    container.add(glass_front);
+    let glass_back = new THREE.Mesh(geometry, glass_material_back);
+    glass_back.renderOrder = 0;
+    container.add(glass_back);
+    scene.add(container);
+
+    function render_frame(time) {
+        container.rotation.x += 0.0052 * (Math.cos(time / 4500) *.3 + 0.8);
+        container.rotation.y -= 0.0041 * (Math.cos(time / 3500) *.3 + 0.8);
+
+        const light_pos1 = new THREE.Vector3(-0.3, -0.3, 0.8);
+        const light_pos2 = new THREE.Vector3(0.2, 0.2, 0.2);
+        glass_material_front.uniforms.light_pos.value.x = THREE.Math.lerp(light_pos1.x, light_pos2.x, Math.cos(time / 4000) * .5 + .5);
+        glass_material_front.uniforms.light_pos.value.y = THREE.Math.lerp(light_pos1.y, light_pos2.y, Math.cos(time / 3000) * .5 + .5);
+        glass_material_front.uniforms.light_pos.value.z = THREE.Math.lerp(light_pos1.z, light_pos2.z, Math.cos(time / 3500) * .5 + .5);
+
+        renderer.render(scene, camera);
+        requestAnimationFrame(render_frame);
+    }
+
+    requestAnimationFrame(render_frame);
+</script>
+
+</body>
+</html>
