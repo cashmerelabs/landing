@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>3D Banner</title>
     <style>
         body {
@@ -31,13 +32,29 @@
             justify-self: stretch;
 
             display: grid;
+            grid-auto-flow: column;
             grid-template-columns: 1fr auto auto auto;
             align-items: center;
             grid-gap: 2em;
             padding: 2em 2.4em;
 
             text-shadow: 0 3px 6px black;
-            font-size: 1em;
+        }
+        @media (max-width: 500px) {
+            section#banner header {
+                grid-template-columns: auto;
+                justify-items: center;
+                grid-gap: 0.4em;
+                padding: 1.7em 1em;
+                color: yellow;
+            }
+        }
+        @media (max-width: 400px) {
+            section#banner header {
+                padding: 1.7em 0.4em;
+                font-size: 0.85em;
+                color: red;
+            }
         }
         section#banner header > * {
             color: unset;
@@ -72,6 +89,39 @@
             text-align: center;
             color: white;
             text-shadow: 0 3px 6px black;
+            white-space: nowrap;
+        }
+        @media (min-width: 1000px) {
+            section#banner hgroup br {
+                display: none;
+            }
+        }
+        @media (max-width: 670px) {
+            section#banner hgroup {
+                padding: 0 0.8em;
+                font-size: 1.8em;
+                color: yellow;
+            }
+        }
+        @media (max-width: 550px) {
+            section#banner hgroup {
+                padding: 0 0.4em;
+                font-size: 1.4em;
+                color: orange;
+            }
+        }
+        @media (max-width: 400px) {
+            section#banner hgroup {
+                padding: 0 0.2em;
+                font-size: 1.2em;
+                color: red;
+            }
+        }
+        @media (max-width: 340px) {
+            section#banner hgroup {
+                font-size: 1em;
+                color: darkred;
+            }
         }
         section#banner hgroup #description {
             margin: unset;
@@ -110,12 +160,12 @@
 <section id="banner">
     <header>
         <span><img src="assets/logo.png" alt="logo">Cashmere</span>
-        <a id="dashboard" href="#todo">Whitepaper</a>
-        <a id="developers" href="#todo">Docs</a>
+        <a href="#todo">Whitepaper</a>
+        <a href="#todo">Docs</a>
         <a id="app" href="#todo">Launch App</a>
     </header>
     <hgroup>
-        <h2>Welcome to the future of stableswap</h2>
+        <h2>Welcome to the future of <br/>stableswap</h2>
         <h6 id="description">Total Value Locked</h6>
         <h6 id="value">$</h6>
     </hgroup>
@@ -164,7 +214,7 @@
 
     // OPTIONAL: You can change the container geometry below
     // const geometry = new THREE.TetrahedronGeometry(1.2, 0);
-    const geometry = new THREE.TetrahedronGeometry(1.2, 0);
+    const geometry = new THREE.OctahedronGeometry(1.1, 0);
     // const geometry = new THREE.BoxGeometry(1.2, 1.2, 1.2);
 
     const glass_shaders = {
