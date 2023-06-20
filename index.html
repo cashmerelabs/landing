@@ -165,7 +165,7 @@
     <hgroup>
         <h2>One-stop access <br/>to omnichain future</h2>
         <h6 id="description">Total Value Locked</h6>
-        <h6 id="value">$1,142,045,619</h6>
+        <h6 id="value"> $ <span id="tvl"></span></h6>
     </hgroup>
     <video muted loop id="background" preload autoplay="autoplay" playsinline poster preload="auto">
 <!--        OPTIONAL: You can change the video file or pick none to have a black background-->
@@ -401,6 +401,16 @@
     }
 
     requestAnimationFrame(render_frame);
+</script>
+
+<script>
+fetch('https://testnet.cashmere.exchange/api/stats')
+.then(response => response.json())
+.then(data => {
+    let tvlFormatted = parseFloat(data.tvl).toLocaleString('en-US', {minimumFractionDigits: 2}); 
+    document.getElementById('tvl').textContent = tvlFormatted;
+})
+.catch(error => console.error('Hata:', error));
 </script>
 
 </body>
