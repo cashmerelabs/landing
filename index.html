@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" type="image/png" href="favicon.ico"/>
     <script src="https://tag.safary.club/stag.js?id=prd_82gDOvZBBK"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/geist-font/geist-sans.min.css">
     <title>Cashmere</title>
     <style>
         body {
@@ -16,8 +17,10 @@
             grid-template-columns: 1fr;
             place-items: center;
             height: 100vh;
+            background: linear-gradient(135deg, #0F0F1B, #000000);
 
-            font-family: "Lato", Helvetica, sans-serif;
+            font-family: "Geist Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+            font-weight: 300;
             color: white;
             user-select: none;
         }
@@ -61,6 +64,7 @@
             text-decoration: unset;
             white-space: nowrap;
             opacity: 0.7;
+            font-weight: 300;
         }
         section#banner header > a:hover {
             opacity: 0.9;
@@ -75,9 +79,19 @@
             filter: invert(1);
         }
         section#banner header #app {
-            padding: 0.6em 1em;
-            border-radius: 1em;
-            background-color: #272727;
+            padding: 0.5em 0.9em;
+            border-radius: 0.4em;
+            background-color: #222222;
+            font-weight: 300;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.2s ease;
+            opacity: 0.9;
+            letter-spacing: 0.02em;
+        }
+        
+        section#banner header #app:hover {
+            background-color: #333333;
+            opacity: 1;
         }
 
         section#banner hgroup {
@@ -85,11 +99,19 @@
             margin-top: min(50vh, 50vw);
             padding: 0 1em;
             font-size: 2.2em;
+            font-weight: 300;
 
             text-align: center;
             color: white;
             text-shadow: 0 3px 6px black;
             white-space: nowrap;
+        }
+        
+        section#banner hgroup h2 {
+            font-weight: 200;
+            margin: 0;
+            opacity: 0.9;
+            letter-spacing: 0.02em;
         }
         @media (min-width: 1000px) {
             section#banner hgroup br {
@@ -164,28 +186,10 @@
         <a id="app" href="http://testnet.cashmere.exchange/">Launch App</a>
     </header>
     <hgroup>
-        <h2>One-stop access <br/>to omnichain future</h2>
-        <h6 id="description">Total Value Locked</h6>
+        <h2>Zero-slippage <br/>native omnichain middleware</h2>
+        <h6 id="description"></h6>
         <h6 id="value"><span id="tvl"></span></h6>
     </hgroup>
-    <video muted loop id="background" preload autoplay="autoplay" playsinline poster preload="auto">
-<!--        OPTIONAL: You can change the video file or pick none to have a black background-->
-
-<!--        <source src="assets/PurpleEnergy_1080p30_WebO/1000bitr.mp4" type="video/mp4">-->
-<!--        <source src="assets/PurpleEnergy_1080p30_WebO/2000bitr.mp4" type="video/mp4">-->
-        <source src="assets/TechForm_1080p30_WebO/4000bitr.mp4" type="video/mp4">
-<!--        <source src="assets/PurpleEnergy_1080p30_WebO/8000bitr.mp4" type="video/mp4">-->
-
-<!--        <source src="assets/WarpSpeed_1080p30_WebO/1000bitr.mp4" type="video/mp4">-->
-<!--        <source src="assets/WarpSpeed_1080p30_WebO/2000bitr.mp4" type="video/mp4">-->
-<!--        <source src="assets/WarpSpeed_1080p30_WebO/4000bitr.mp4" type="video/mp4">-->
-<!--        <source src="assets/WarpSpeed_1080p30_WebO/8000bitr.mp4" type="video/mp4">-->
-
-<!--        <source src="assets/TechForm_1080p30_WebO/1000bitr.mp4" type="video/mp4">-->
-<!--        <source src="assets/TechForm_1080p30_WebO/2000bitr.mp4" type="video/mp4">-->
-<!--        <source src="assets/TechForm_1080p30_WebO/4000bitr.mp4" type="video/mp4">-->
-<!--        <source src="assets/TechForm_1080p30_WebO/8000bitr.mp4" type="video/mp4">-->
-    </video>
     <canvas id="animation"></canvas>
 </section>
 
